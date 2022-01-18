@@ -8,9 +8,15 @@ namespace Gameframe.SaveLoad
 {
     public class SerializationMethodJsonDotNetEncrypted : ISerializationMethodEncrypted
     {
+        protected JsonConverter[] converters;
         private string _key = null;
         private string _salt = null;
-        
+
+        public void SetConverters(params JsonConverter[] converters)
+        {
+            this.converters = converters;
+        }
+
         public SerializationMethodJsonDotNetEncrypted(string key, string salt)
         {
             SetEncryption(key,salt);
@@ -19,7 +25,7 @@ namespace Gameframe.SaveLoad
         public void Save(object savedObject, FileStream fileStream)
         {
             //TODO: Using Unity's json serializer... does not support dictionaries. Do better.
-            var json = JsonConvert.SerializeObject(savedObject);
+            var json = JsonConvert.SerializeObject(savedObject, converters);
             using (var memoryStream = new MemoryStream())
             {
                 using (var streamWriter = new StreamWriter(memoryStream))
@@ -43,7 +49,7 @@ namespace Gameframe.SaveLoad
                 using (var streamReader = new StreamReader(memoryStream))
                 {
                     var json = streamReader.ReadToEnd();
-                    loadedObj = JsonConvert.DeserializeObject(json, savedObjectType);
+                    loadedObj = JsonConvert.DeserializeObject(json, savedObjectType, converters);
                     streamReader.Close();
                 }
             }
@@ -71,7 +77,7 @@ namespace Gameframe.SaveLoad
         {
             using (var stream = new MemoryStream())
             {
-                var writeJson = JsonConvert.SerializeObject(copyObject);
+                var writeJson = JsonConvert.SerializeObject(copyObject, converters);
             
                 var streamWriter = new StreamWriter(stream);
                 streamWriter.Write(writeJson);
@@ -82,7 +88,7 @@ namespace Gameframe.SaveLoad
                 using (var streamReader = new StreamReader(stream))
                 {
                     var readJson = streamReader.ReadToEnd();
-                    return JsonConvert.DeserializeObject(readJson, copyObject.GetType());
+                    return JsonConvert.DeserializeObject(readJson, copyObject.GetType(), converters);
                 }
             }
         }

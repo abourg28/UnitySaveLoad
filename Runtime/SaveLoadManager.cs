@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -63,16 +64,16 @@ namespace Gameframe.SaveLoad
         /// <param name="obj">object to be saved</param>
         /// <param name="filename">Name of file that will be written to</param>
         /// <param name="folder">Name of the folder that should contain the file</param>
-        public void Save(object obj, string filename, string folder = null)
+        public void Save(object obj, string filename, string folder = null, params JsonConverter[] converters)
         {
             if (string.IsNullOrEmpty(folder))
             {
                 folder = defaultFolder;
             }
             var saveLoadMethod = GetSaveLoadMethod(saveMethod);
-            SaveLoadUtility.Save(obj,saveLoadMethod,filename,folder, baseFolder);
+            SaveLoadUtility.Save(obj,saveLoadMethod,filename,folder, baseFolder, converters);
         }
-
+        
         /// <summary>
         /// Gets the list of save files that have been created
         /// </summary>

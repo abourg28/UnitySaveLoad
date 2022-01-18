@@ -8,9 +8,16 @@ namespace Gameframe.SaveLoad
 {
     public class SerializationMethodJsonDotNet : ISerializationMethod
     {
+        protected JsonConverter[] converters;
+
+        public void SetConverters(params JsonConverter[] converters)
+        {
+            this.converters = converters;
+        }
+
         public void Save(object savedObject, FileStream fileStream)
         {
-            var json = JsonConvert.SerializeObject(savedObject);
+            var json = JsonConvert.SerializeObject(savedObject, converters);
             using (var streamWriter = new StreamWriter(fileStream))
             {
                 streamWriter.Write(json);
@@ -26,7 +33,7 @@ namespace Gameframe.SaveLoad
             {
                 var json = streamReader.ReadToEnd();
                 streamReader.Close();
-                loadedObj = JsonConvert.DeserializeObject(json,savedObjectType);
+                loadedObj = JsonConvert.DeserializeObject(json,savedObjectType, converters);
             }
             
             return loadedObj;
@@ -36,7 +43,7 @@ namespace Gameframe.SaveLoad
         {
             using (var stream = new MemoryStream())
             {
-                var writeJson = JsonConvert.SerializeObject(copyObject);
+                var writeJson = JsonConvert.SerializeObject(copyObject, converters);
             
                 var streamWriter = new StreamWriter(stream);
                 streamWriter.Write(writeJson);
@@ -47,7 +54,7 @@ namespace Gameframe.SaveLoad
                 using (var streamReader = new StreamReader(stream))
                 {
                     var readJson = streamReader.ReadToEnd();
-                    return JsonConvert.DeserializeObject(readJson, copyObject.GetType());
+                    return JsonConvert.DeserializeObject(readJson, copyObject.GetType(), converters);
                 }
             }
         }

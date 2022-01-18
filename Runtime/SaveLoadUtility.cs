@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Newtonsoft.Json;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using UnityEngine;
@@ -51,7 +52,7 @@ namespace Gameframe.SaveLoad
         /// <param name="filename"></param>
         /// <param name="folderName"></param>
         /// <param name="baseFolderPath"></param>
-        public static void Save(object saveObject, ISerializationMethod serializationMethod, string filename, string folderName = null, string baseFolderPath = null)
+        public static void Save(object saveObject, ISerializationMethod serializationMethod, string filename, string folderName = null, string baseFolderPath = null, params JsonConverter[] converters)
         {
             var savePath = GetSavePath(folderName,baseFolderPath);
             var saveFilename = GetSaveFileName(filename);
@@ -60,6 +61,16 @@ namespace Gameframe.SaveLoad
             if (!Directory.Exists(savePath))
             {
                 Directory.CreateDirectory(savePath);
+            }
+
+            if (serializationMethod is SerializationMethodJsonDotNet)
+            {
+                ((SerializationMethodJsonDotNet)serializationMethod).SetConverters(converters);
+            }
+
+            if (serializationMethod is SerializationMethodJsonDotNetEncrypted)
+            {
+                ((SerializationMethodJsonDotNetEncrypted)serializationMethod).SetConverters(converters);
             }
 
             using (var saveFile = File.Create(savePath + saveFilename))
