@@ -147,7 +147,7 @@ namespace Gameframe.SaveLoad
                 folder = defaultFolder;
             }
             var saveLoadMethod = GetSaveLoadMethod(saveMethod);
-            return SaveLoadUtility.Load(type, saveLoadMethod,filename,folder, baseFolder);
+            return SaveLoadUtility.Load(type, saveLoadMethod,filename,folder, baseFolder, converters);
         }
 
         /// <summary>
