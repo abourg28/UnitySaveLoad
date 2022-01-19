@@ -89,7 +89,7 @@ namespace Gameframe.SaveLoad
         /// <param name="folderName"></param>
         /// <param name="baseFolderPath"></param>
         /// <returns></returns>
-        public static object Load(System.Type objectType, ISerializationMethod serializationMethod, string filename, string folderName = null, string baseFolderPath = null)
+        public static object Load(System.Type objectType, ISerializationMethod serializationMethod, string filename, string folderName = null, string baseFolderPath = null, params JsonConverter[] converters)
         {
             var savePath = GetSavePath(folderName, baseFolderPath);
             var saveFilename = savePath + GetSaveFileName(filename);
@@ -99,6 +99,16 @@ namespace Gameframe.SaveLoad
             if (!Directory.Exists(savePath) || !File.Exists(saveFilename))
             {
                 return null;
+            }
+
+            if (serializationMethod is SerializationMethodJsonDotNet)
+            {
+                ((SerializationMethodJsonDotNet)serializationMethod).SetConverters(converters);
+            }
+
+            if (serializationMethod is SerializationMethodJsonDotNetEncrypted)
+            {
+                ((SerializationMethodJsonDotNetEncrypted)serializationMethod).SetConverters(converters);
             }
 
             using (var saveFile = File.Open(saveFilename, FileMode.Open, FileAccess.Read, FileShare.Read))

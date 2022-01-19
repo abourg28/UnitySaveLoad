@@ -128,9 +128,9 @@ namespace Gameframe.SaveLoad
         /// <param name="folder">Name of folder containing the file</param>
         /// <typeparam name="T">Type of object to be loaded from file</typeparam>
         /// <returns>Instance of object loaded from file</returns>
-        public T Load<T>(string filename, string folder = null)
+        public T Load<T>(string filename, string folder = null, params JsonConverter[] converters)
         {
-            return (T)Load(typeof(T), filename, folder);
+            return (T)Load(typeof(T), filename, folder, converters);
         }
 
         /// <summary>
@@ -140,7 +140,7 @@ namespace Gameframe.SaveLoad
         /// <param name="filename">Name of file to load object from</param>
         /// <param name="folder">Name of folder containing the file to be loaded</param>
         /// <returns>Instance of object to be loaded. Null if file did not exist.</returns>
-        public object Load(Type type, string filename, string folder = null)
+        public object Load(Type type, string filename, string folder = null, params JsonConverter[] converters)
         {
             if (string.IsNullOrEmpty(folder))
             {
@@ -171,10 +171,10 @@ namespace Gameframe.SaveLoad
         /// <param name="obj">Object to be written to disk.</param>
         /// <param name="filename">Name of file to write to.</param>
         /// <param name="folder">Name of folder to save to. If null the default folder will be used.</param>
-        public void SaveWithMethod(SerializationMethodType methodType, object obj, string filename, string folder = null)
+        public void SaveWithMethod(SerializationMethodType methodType, object obj, string filename, string folder = null, params JsonConverter[] converters)
         {
             var saveLoadMethod = GetSaveLoadMethod(methodType);
-            SaveLoadUtility.Save(obj,saveLoadMethod,filename,folder);
+            SaveLoadUtility.Save(obj,saveLoadMethod,filename,folder,null, converters);
         }
 
         /// <summary>
@@ -185,9 +185,9 @@ namespace Gameframe.SaveLoad
         /// <param name="folder">Name of the folder containing the file.</param>
         /// <typeparam name="T">Type of object to be loaded from the file.</typeparam>
         /// <returns>Object instance loaded from file. Null if file does not exist or load failed.</returns>
-        public object LoadWithMethod<T>(SerializationMethodType methodType, string filename, string folder = null)
+        public object LoadWithMethod<T>(SerializationMethodType methodType, string filename, string folder = null, params JsonConverter[] converters)
         {
-            return (T)LoadWithMethod(methodType, typeof(T), filename, folder);
+            return (T)LoadWithMethod(methodType, typeof(T), filename, folder, converters);
         }
 
         /// <summary>
@@ -198,10 +198,10 @@ namespace Gameframe.SaveLoad
         /// <param name="folder">Name of the folder containing the file.</param>
         /// <typeparam name="T">Type of object to be loaded from the file.</typeparam>
         /// <returns>Object instance loaded from file. Null if file does not exist or load failed.</returns>
-        public object LoadWithMethod(SerializationMethodType methodType, Type type, string filename, string folder = null)
+        public object LoadWithMethod(SerializationMethodType methodType, Type type, string filename, string folder = null, params JsonConverter[] converters)
         {
             var saveLoadMethod = GetSaveLoadMethod(methodType);
-            return SaveLoadUtility.Load(type, saveLoadMethod,filename,folder);
+            return SaveLoadUtility.Load(type, saveLoadMethod,filename,folder,null, converters);
         }
 
         /// <summary>
@@ -212,14 +212,14 @@ namespace Gameframe.SaveLoad
         /// <param name="unityObj">Object to be saved.</param>
         /// <param name="filename">Name of file to save to</param>
         /// <param name="folder">Name of folder to save the file in. Uses defualt folder when null.</param>
-        public void SaveUnityObject(UnityEngine.Object unityObj, string filename, string folder = null)
+        public void SaveUnityObject(UnityEngine.Object unityObj, string filename, string folder = null, params JsonConverter[] converters)
         {
             var savedObj = new JsonSerializedUnityObject
             {
                 jsonData = JsonUtility.ToJson(unityObj)
             };
             
-            Save(savedObj,filename,folder);
+            Save(savedObj,filename,folder, converters);
         }
 
         /// <summary>
