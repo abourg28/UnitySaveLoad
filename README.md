@@ -13,7 +13,7 @@ Serialization helper utility that supports save, load and encryption.
 #### Using UnityPackageManager (for Unity 2019.3 or later)
 Open the package manager window (menu: Window > Package Manager)<br/>
 Select "Add package from git URL...", fill in the pop-up with the following link:<br/>
-https://github.com/coryleach/UnitySaveLoad.git#1.0.6<br/>
+https://github.com/abourg28/UnitySaveLoad.git#1.0.6<br/>
 
 #### Using UnityPackageManager (for Unity 2019.1 or later)
 
